@@ -1,0 +1,47 @@
+body {
+    margin: 10px;
+    font-family: Arial, sans-serif;
+    background-color: purple;
+}
+
+.slideshow-container {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    margin: 10px;
+    overflow: hidden;
+}
+
+.slide {
+    display: none;
+    position: relative;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+.left-zone,
+.right-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.left-zone {
+    left: 0;
+}
+
+.right-zone {
+    right: 0;
+}
+
+.left-zone:hover,
+.right-zone:hover {
+    opacity: 0.5;
+}
