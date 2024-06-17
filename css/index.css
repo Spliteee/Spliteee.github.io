@@ -24,6 +24,10 @@ body {
 .head {
     color: white;
     font-size: 48px;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
 }
 
 .desc {
