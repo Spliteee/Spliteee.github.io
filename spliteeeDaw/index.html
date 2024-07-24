@@ -1,0 +1,374 @@
+<html><head><base href="https://cdn.jsdelivr.net/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DAW-Style Beat Maker with Melody Drawer</title><style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #282c34;
+        color: #abb2bf;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .daw-container {
+        background-color: #21252b;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 800px;
+    }
+    .track {
+        background-color: #2c313a;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .track-name {
+        width: 80px;
+        font-weight: bold;
+        color: #61afef;
+    }
+    .grid {
+        display: flex;
+        flex-grow: 1;
+        gap: 5px;
+    }
+    .pad {
+        width: 30px;
+        height: 30px;
+        background-color: #3e4451;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .pad.active {
+        background-color: #98c379;
+    }
+    .pad.current {
+        box-shadow: 0 0 0 2px #61afef;
+    }
+    .controls {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #2c313a;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .control-btn {
+        background-color: #61afef;
+        border: none;
+        color: #282c34;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.2s;
+    }
+    .control-btn:hover {
+        background-color: #528bff;
+    }
+    .tempo-slider {
+        width: 200px;
+        -webkit-appearance: none;
+        background: #3e4451;
+        outline: none;
+        border-radius: 15px;
+    }
+    .tempo-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #61afef;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+    .tempo-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #61afef;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+    .toggle-container {
+        display: flex;
+        align-items: center;
+    }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #3e4451;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: #abb2bf;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+        background-color: #61afef;
+    }
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
+    .melody-drawer {
+        background-color: #2c313a;
+        border-radius: 5px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+    .melody-grid {
+        display: grid;
+        grid-template-columns: repeat(16, 1fr);
+        gap: 2px;
+    }
+    .melody-cell {
+        width: 100%;
+        height: 20px;
+        background-color: #3e4451;
+        border: none;
+        cursor: pointer;
+    }
+    .melody-cell.active {
+        background-color: #98c379;
+    }
+    .melody-row-label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 5px;
+        font-size: 12px;
+    }
+    .header {
+        text-align: center;
+    }
+</style></head><body>
+<div class="daw-container">
+    <h1 class="header">SpliteeeDAW</h1>
+    <div id="trackContainer"></div>
+    <div class="melody-drawer">
+        <h2>Melody Drawer</h2>
+        <div id="melodyGrid"></div>
+    </div>
+    <div class="controls">
+        <button id="playBtn" class="control-btn">Play</button>
+        <input type="range" min="60" max="180" value="120" class="tempo-slider" id="tempoSlider">
+        <span id="tempoDisplay">120 BPM</span>
+        <div class="toggle-container">
+            <label class="toggle-switch">
+                <input type="checkbox" id="metronomeToggle">
+                <span class="toggle-slider"></span>
+            </label>
+            <span>Metronome</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+<script>
+const trackContainer = document.getElementById('trackContainer');
+const playBtn = document.getElementById('playBtn');
+const tempoSlider = document.getElementById('tempoSlider');
+const tempoDisplay = document.getElementById('tempoDisplay');
+const metronomeToggle = document.getElementById('metronomeToggle');
+const melodyGrid = document.getElementById('melodyGrid');
+
+// Synth setup
+const kickSynth = new Tone.MembraneSynth({
+    pitchDecay: 0.05,
+    octaves: 10,
+    oscillator: { type: 'sine' },
+    envelope: {
+        attack: 0.001,
+        decay: 0.4,
+        sustain: 0.01,
+        release: 1.4,
+        attackCurve: 'exponential'
+    }
+}).toDestination();
+
+const kickEQ = new Tone.EQ3({ low: 6, mid: -3, high: -6 }).toDestination();
+kickSynth.connect(kickEQ);
+
+const snareNoise = new Tone.NoiseSynth({
+    noise: { type: 'white' },
+    envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 }
+}).toDestination();
+
+const snareMembrane = new Tone.MembraneSynth({
+    pitchDecay: 0.05,
+    octaves: 10,
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.1 },
+    volume: -10
+}).toDestination();
+
+const snareVerb = new Tone.Reverb({ decay: 0.5, wet: 0.3 }).toDestination();
+snareNoise.connect(snareVerb);
+snareMembrane.connect(snareVerb);
+
+const metronomeSynth = new Tone.Synth({
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+}).toDestination();
+
+const leadSynth = new Tone.PolySynth(Tone.Synth).toDestination();
+
+const tracks = [
+    { name: 'Kick', sound: { trigger: (time) => kickSynth.triggerAttackRelease('C1', '8n', time) }},
+    { name: 'Snare', sound: { trigger: (time) => {
+        snareNoise.triggerAttackRelease('16n', time);
+        snareMembrane.triggerAttackRelease('C2', '16n', time);
+    }}},
+    { name: 'Hi-Hat', sound: new Tone.MetalSynth({
+        frequency: 200,
+        envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
+        harmonicity: 5.1,
+        modulationIndex: 32,
+        resonance: 4000,
+        octaves: 1.5
+    }).toDestination() },
+];
+
+const cols = 16;
+let isPlaying = false;
+
+// Create tracks
+tracks.forEach((track, index) => {
+    const trackDiv = document.createElement('div');
+    trackDiv.className = 'track';
+    
+    const trackName = document.createElement('div');
+    trackName.className = 'track-name';
+    trackName.textContent = track.name;
+    trackDiv.appendChild(trackName);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    
+    for (let i = 0; i < cols; i++) {
+        const pad = document.createElement('button');
+        pad.className = 'pad';
+        pad.addEventListener('click', () => pad.classList.toggle('active'));
+        grid.appendChild(pad);
+    }
+
+    trackDiv.appendChild(grid);
+    trackContainer.appendChild(trackDiv);
+});
+
+// Create melody drawer
+const notes = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4'];
+notes.forEach((note, rowIndex) => {
+    const row = document.createElement('div');
+    row.className = 'melody-grid';
+    
+    const rowLabel = document.createElement('div');
+    rowLabel.className = 'melody-row-label';
+    rowLabel.textContent = note;
+    row.appendChild(rowLabel);
+
+    for (let i = 0; i < cols; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'melody-cell';
+        cell.dataset.note = note;
+        cell.dataset.column = i;
+        cell.addEventListener('click', () => cell.classList.toggle('active'));
+        row.appendChild(cell);
+    }
+
+    melodyGrid.appendChild(row);
+});
+
+function startSequencer() {
+    const seq = new Tone.Sequence((time, col) => {
+        tracks.forEach((track, trackIndex) => {
+            const grid = trackContainer.children[trackIndex].querySelector('.grid');
+            const pad = grid.children[col];
+            
+            grid.querySelectorAll('.pad').forEach(p => p.classList.remove('current'));
+            pad.classList.add('current');
+
+            if (pad.classList.contains('active')) {
+                if (track.name === 'Kick' || track.name === 'Snare') {
+                    track.sound.trigger(time);
+                } else {
+                    track.sound.triggerAttackRelease('C4', '16n', time);
+                }
+            }
+        });
+
+        // Play melody notes
+        melodyGrid.querySelectorAll(`.melody-cell[data-column="${col}"].active`).forEach(cell => {
+            leadSynth.triggerAttackRelease(cell.dataset.note, '16n', time);
+        });
+
+        // Metronome
+        if (metronomeToggle.checked) {
+            if (col % 4 === 0) {
+                metronomeSynth.triggerAttackRelease('C5', '32n', time, 0.5);
+            } else {
+                metronomeSynth.triggerAttackRelease('C4', '32n', time, 0.3);
+            }
+        }
+    }, Array.from({length: cols}, (_, i) => i), '16n');
+
+    seq.start(0);
+    Tone.Transport.start();
+}
+
+playBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        Tone.Transport.stop();
+        playBtn.textContent = 'Play';
+    } else {
+        Tone.start();
+        startSequencer();
+        playBtn.textContent = 'Stop';
+    }
+    isPlaying = !isPlaying;
+});
+
+tempoSlider.addEventListener('input', () => {
+    const tempo = tempoSlider.value;
+    Tone.Transport.bpm.value = tempo;
+    tempoDisplay.textContent = `${tempo} BPM`;
+});
+
+metronomeToggle.addEventListener('change', () => {
+    // The metronome state is now handled in the sequencer loop
+});
+</script>
+</body></html>
