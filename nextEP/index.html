@@ -1,0 +1,254 @@
+<html><head><base href="https://guessspliteslyrics.com/">
+<title>Guess Splite's Horrible Lyrics</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    padding: 20px;
+  }
+  #game-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+  }
+  h1 {
+    color: #4a4a4a;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  }
+  #description {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: #555;
+  }
+  #lyric-display {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    font-style: italic;
+    color: #555;
+    line-height: 1.6;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+  }
+  #guess-input {
+    width: 60%;
+    padding: 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  #guess-input:focus {
+    outline: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+  #submit-guess, #hint-button, #restart-button {
+    padding: 12px 25px;
+    background-color: #764ba2;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    margin: 10px 5px;
+  }
+  #submit-guess:hover, #hint-button:hover, #restart-button:hover {
+    background-color: #667eea;
+    transform: translateY(-2px);
+  }
+  #score-display {
+    margin-top: 30px;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #4a4a4a;
+  }
+  #unlock-link {
+    display: none;
+    margin-top: 30px;
+    color: #764ba2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+  }
+  #unlock-link:hover {
+    color: #667eea;
+    text-decoration: underline;
+  }
+  #feedback, #hint-display {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    min-height: 20px;
+  }
+  .correct {
+    color: #4CAF50;
+    animation: fadeInOut 2s ease;
+  }
+  .incorrect {
+    color: #f44336;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+</style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Guess Splite's Horrible Lyrics</h1>
+    <p id="description">if you get all of these you get to listen to an upcoming EP ;) goodluck</p>
+    <div id="lyric-display"></div>
+    <input type="text" id="guess-input" placeholder="Enter song title">
+    <button id="submit-guess">Guess</button>
+    <button id="hint-button">Get Hint</button>
+    <button id="restart-button" style="display: none;">Restart</button>
+    <div id="feedback"></div>
+    <div id="hint-display"></div>
+    <div id="score-display">Score: 0 / 10</div>
+    <a id="unlock-link" href="https://drive.google.com/drive/folders/1mupbP_OZ1lwJtqYgCE97w2ZMga_L5W0X?usp=sharing" target="_blank">🎉 Unlock Upcoming EP Link 🎉</a>
+  </div>
+
+  <script>
+    const lyricsAndTitles = [
+      {lyric: "bitches gonna talk, shut they mouth", title: "CLOUT", hint: "one of the songs from the first half of the S.P.L.I.T.E EP"},
+      {lyric: "yeah yeah, thats me, imma put a milly on my jeans", title: "RECKLESS", hint: "a song from the second half of the S.P.L.I.T.E EP"},
+      {lyric: "keepin' it crazy, yeah, life is so brazy", title: "DAZING", hint: "a hyper-ish song from Splites recent discography"},
+      {lyric: "little bro feining for sweaty gymnastics", title: "take my time", hint: "a powerful and repetitive song"},
+      {lyric: "to all of these bitches that fuck with me, play with me, hope that all of you die out", title: "CRASH OUT", hint: "this song is accompanied by Splite's first currently available music video"},
+      {lyric: "S.P.L.I.T.E lil bitch, you better get it through", title: "CLOUT", hint: "one of the songs from the first half of the S.P.L.I.T.E EP"},
+      {lyric: "I been through it, I been through it, nah", title: "T4LK", hint: "conclusion to S.P.L.I.T.E"},
+      {lyric: "i blocked her ass and I left her on read, I would be better off if she was dead", title: "FUCKSHI", hint: "electric sounding vocals, featuring an artist that was on a song earlier in Splite's discography"},
+      {lyric: "why all these bitchasses made out of plastic?", title: "take my time", hint: "a powerful and repetitive song"},
+      {lyric: "but I'll come back, bitches will leave but im coming back", title: "DAZING", hint: "a hyper-ish song from Splites recent discography"}
+    ];
+
+    let shuffledLyrics = [];
+    let currentLyricIndex = 0;
+    let score = 0;
+    let hintUsed = false;
+
+    const lyricDisplay = document.getElementById('lyric-display');
+    const guessInput = document.getElementById('guess-input');
+    const submitGuess = document.getElementById('submit-guess');
+    const hintButton = document.getElementById('hint-button');
+    const restartButton = document.getElementById('restart-button');
+    const scoreDisplay = document.getElementById('score-display');
+    const unlockLink = document.getElementById('unlock-link');
+    const feedback = document.getElementById('feedback');
+    const hintDisplay = document.getElementById('hint-display');
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function initGame() {
+      shuffledLyrics = shuffleArray(lyricsAndTitles);
+      currentLyricIndex = 0;
+      score = 0;
+      hintUsed = false;
+      scoreDisplay.textContent = `Score: ${score} / 10`;
+      unlockLink.style.display = 'none';
+      submitGuess.style.display = 'inline-block';
+      hintButton.style.display = 'inline-block';
+      restartButton.style.display = 'none';
+      guessInput.disabled = false;
+      displayNewLyric();
+    }
+
+    function displayNewLyric() {
+      lyricDisplay.textContent = `"${shuffledLyrics[currentLyricIndex].lyric}"`;
+      hintDisplay.textContent = '';
+      hintUsed = false;
+      feedback.textContent = '';
+    }
+
+    function checkGuess() {
+      const userGuess = guessInput.value.trim().toLowerCase();
+      const correctTitle = shuffledLyrics[currentLyricIndex].title.toLowerCase();
+
+      if (userGuess === correctTitle) {
+        score++;
+        scoreDisplay.textContent = `Score: ${score} / 10`;
+        feedback.textContent = "Correct!";
+        feedback.className = "correct";
+        
+        if (score === 10) {
+          unlockLink.style.display = 'block';
+          endGame(true);
+        } else {
+          currentLyricIndex++;
+          displayNewLyric();
+        }
+      } else {
+        feedback.textContent = "Sorry, that's incorrect. Game Over!";
+        feedback.className = "incorrect";
+        endGame(false);
+      }
+
+      guessInput.value = '';
+    }
+
+    function showHint() {
+      if (!hintUsed) {
+        hintDisplay.textContent = `Hint: ${shuffledLyrics[currentLyricIndex].hint}`;
+        hintUsed = true;
+      }
+    }
+
+    function endGame(won) {
+      submitGuess.style.display = 'none';
+      hintButton.style.display = 'none';
+      restartButton.style.display = 'inline-block';
+      guessInput.disabled = true;
+
+      if (won) {
+        lyricDisplay.textContent = "Congratulations! You've completed all the lyrics!";
+      } else {
+        lyricDisplay.textContent = "Game Over. Better luck next time!";
+      }
+    }
+
+    submitGuess.addEventListener('click', checkGuess);
+    hintButton.addEventListener('click', showHint);
+    restartButton.addEventListener('click', initGame);
+    guessInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkGuess();
+      }
+    });
+
+    initGame();
+  </script>
+</body></html>
